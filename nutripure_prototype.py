@@ -506,10 +506,11 @@ df_display = df_f.copy()
 df_display["Alerte"] = df_display["Alertes"].apply(
     lambda v: "" if not v else ("● " + str(len(v.split(" | "))))
 )
+df_display["v"] = df_display["Version"].str.split(" · ").str[0]
 
 COLS_DISPLAY = [
     "Influenceur", "Responsable", "CA mois (€ HT)", "Tendance",
-    "Type contrat", "Source parsing",
+    "Type contrat", "v", "Source parsing",
     "Statut TVA", "Rémunération HT (€)", "Montant à facturer",
     "Canal", "Alerte",
 ]
@@ -525,6 +526,12 @@ def _style_alerte(val: str) -> str:
     return "background-color: #fef3c7; color: #92400e; font-weight: 700; text-align: center" if val else ""
 
 
+def _style_version(val: str) -> str:
+    if val == "v2":
+        return "background-color: #e0e7ff; color: #3730a3; font-weight: 700; text-align: center"
+    return "color: #64748b; text-align: center"
+
+
 def _style_tva(val: str) -> str:
     if val == "hors_ue": return "background-color: #fee2e2; color: #991b1b; font-weight: 700"
     if val == "inconnu":  return "background-color: #fef3c7; color: #92400e"
@@ -537,6 +544,7 @@ styled = (
     .map(_style_source,  subset=["Source parsing"])
     .map(_style_alerte,  subset=["Alerte"])
     .map(_style_tva,     subset=["Statut TVA"])
+    .map(_style_version, subset=["v"])
     .format({
         "CA mois (€ HT)":       "{:,.0f} €",
         "Rémunération HT (€)":  "{:,.2f} €",
@@ -555,6 +563,8 @@ st.dataframe(
         "CA mois (€ HT)":        st.column_config.TextColumn("CA mois (€ HT)", width="small"),
         "Tendance":              st.column_config.TextColumn(width="small"),
         "Type contrat":          st.column_config.TextColumn("Type", width="small"),
+        "v":                     st.column_config.TextColumn("v", width="small",
+                                     help="Version active du contrat. Détail complet dans le message généré."),
         "Source parsing":        st.column_config.TextColumn("Parser", width="small"),
         "Statut TVA":            st.column_config.TextColumn("TVA", width="small"),
         "Rémunération HT (€)":   st.column_config.TextColumn("Rému HT", width="medium"),
@@ -564,7 +574,6 @@ st.dataframe(
                                      help="Nombre d'alertes. Détail dans l'expander ci-dessous."),
     },
 )
-st.caption("💡 La colonne « Version » a été déplacée dans la vue migration ci-dessous. Détail des alertes dans l'expander.")
 
 # ── Alertes détaillées ─────────────────────────────────────────────────────────
 
@@ -611,16 +620,6 @@ with st.expander("Vue migration — texte libre → JSON structuré (tous les co
         matches = df_f[df_f["Influenceur"] == sel_migr]
         if len(matches):
             row_m = matches.iloc[0]
-            version_label = row_m["Version"]
-            st.markdown(
-                f"<div class='version-strip'>"
-                f"<div class='version-chip'>{version_label.split(' · ')[0].upper()}</div>"
-                f"<div class='version-meta'>Signé le <strong>{version_label.split(' · ')[1]}</strong> · "
-                f"Type <strong>{row_m['Type contrat']}</strong> · "
-                f"Parsé par <strong>{row_m['Source parsing']}</strong></div>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
             col_m1, col_m2 = st.columns(2)
             with col_m1:
                 st.markdown("**Avant — texte libre Notion**")
