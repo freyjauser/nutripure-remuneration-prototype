@@ -507,8 +507,6 @@ def genere_message(
     resultat: Resultat,
     contact_channel: str = "dm_instagram",
 ) -> str:
-    channel_label = _CHANNEL_LABELS.get(contact_channel, contact_channel)
-
     if resultat.montant_facturer is not None:
         ligne_facture = f"Merci de nous adresser une facture de **{_fmt(resultat.montant_facturer)} €**"
         if resultat.remuneration_ht != resultat.montant_facturer:
@@ -528,6 +526,5 @@ def genere_message(
         f"• Rémunération due : {_fmt(resultat.remuneration_ht)} € HT\n\n"
         f"Détail du calcul :\n{resultat.detail_calcul}\n\n"
         f"{ligne_facture}\n\n"
-        f"Canal de contact : {channel_label}\n\n"
         f"Belle journée,\n{responsable}"
     )
