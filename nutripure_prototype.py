@@ -583,7 +583,7 @@ df_display["Alerte"] = df_display["Alertes"].apply(
 df_display["v"] = df_display["Version"].str.split(" · ").str[0]
 
 COLS_DISPLAY = [
-    "Influenceur", "Responsable", "CA mois (€ HT)", "Tendance",
+    "ID", "Influenceur", "Responsable", "CA mois (€ HT)", "Tendance",
     "Type contrat", "v", "Source parsing",
     "Statut TVA", "Rémunération HT (€)", "Montant à facturer",
     "Canal", "Alerte",
@@ -632,6 +632,8 @@ st.dataframe(
     use_container_width=True,
     height=min(500, 55 + 35 * len(df_f)),
     column_config={
+        "ID":                    st.column_config.TextColumn(width="small",
+                                     help="Clé primaire stable inventée — le pseudo Instagram peut changer, pas l'ID."),
         "Influenceur":           st.column_config.TextColumn(width="medium"),
         "Responsable":           st.column_config.TextColumn(width="small"),
         "CA mois (€ HT)":        st.column_config.TextColumn("CA mois (€ HT)", width="small"),
