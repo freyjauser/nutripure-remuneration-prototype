@@ -498,6 +498,68 @@ with k5:
     with st.container(border=True):
         st.metric("Manuels (TVA)", nb_manual)
 
+# ── Référentiel des types de contrats ────────────────────────────────────────
+
+with st.expander("📖 Référentiel des types de contrats — comprendre T1 à T5"):
+    st.markdown(
+        "Chaque contrat identifié dans le portefeuille est classé selon l'un des 5 types "
+        "ci-dessous. Les contrats qui ne matchent aucun de ces types passent par le parseur "
+        "LLM (Gemini) et sont taggés `LLM (X %)`."
+    )
+    ref_types = pd.DataFrame([
+        {
+            "Type": "T1",
+            "Base fixe": "1 500 €",
+            "Formule": "+ 4→10 % du CA total selon palier",
+            "Seuils": "8k / 9k / 10k / 11k / 12k €",
+            "Notes": "Paliers 8k-11k inclusifs (≥). Palier 12k strict (au-delà de = >). Bug T1 12k identifié et corrigé.",
+        },
+        {
+            "Type": "T2",
+            "Base fixe": "4 600 €",
+            "Formule": "+ 4 % du CA (flat, dès 0 €)",
+            "Seuils": "Aucun explicite",
+            "Notes": "Contrat sous-spécifié dans Notion. Question ouverte à Yohan : le contrat papier a-t-il un seuil d'activation ?",
+        },
+        {
+            "Type": "T3",
+            "Base fixe": "2 000 €",
+            "Formule": "+ 4→6 % du CA total selon palier",
+            "Seuils": "12k / 14k / 16k € (stricts)",
+            "Notes": "Seuils écrits 'si CA >' (strict). Probable erreur de saisie — question ouverte à Yohan (voir @yanis.calisthenics à CA=12 000 exact).",
+        },
+        {
+            "Type": "T4",
+            "Base fixe": "0 €",
+            "Formule": "Table de lookup (bonus fixe + taux %)",
+            "Seuils": "Couverture 1 000 - 5 000 €",
+            "Notes": "Pas de base fixe. CA < 1 000 € = 0 € + alerte critique. CA > 5 000 € = palier max + alerte.",
+        },
+        {
+            "Type": "T5",
+            "Base fixe": "100 €",
+            "Formule": "Base + table de lookup étendue",
+            "Seuils": "Couverture 500 - 5 000 €",
+            "Notes": "Notation inversée sur palier 500 ('6 % + 65' vs '125 + 6' pour les autres). Interprétation uniforme : base + bonus_fixe + taux% × CA.",
+        },
+    ])
+    st.dataframe(
+        ref_types,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Type":      st.column_config.TextColumn(width="small"),
+            "Base fixe": st.column_config.TextColumn(width="small"),
+            "Formule":   st.column_config.TextColumn(width="medium"),
+            "Seuils":    st.column_config.TextColumn(width="medium"),
+            "Notes":     st.column_config.TextColumn(width="large"),
+        },
+    )
+    st.caption(
+        "💡 Ce référentiel est aujourd'hui hardcodé dans le code — post-migration, il serait "
+        "auto-généré depuis les métadonnées des types dans Notion (formulaire structuré à la signature)."
+    )
+
 # ── Tableau principal ──────────────────────────────────────────────────────────
 
 st.markdown("<div class='section-title'>Détail par influenceur</div>", unsafe_allow_html=True)
