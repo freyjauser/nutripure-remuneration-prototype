@@ -425,6 +425,7 @@ with st.sidebar:
     )
     if st.button("Recharger / recalculer", use_container_width=True):
         st.cache_data.clear()
+        st.session_state["_reload_toast"] = True
         st.rerun()
 
     st.markdown("---")
@@ -449,6 +450,9 @@ with st.sidebar:
     """, unsafe_allow_html=True)
 
 df = process_all(CSV_PATH, autoriser_llm)
+
+if st.session_state.pop("_reload_toast", False):
+    st.toast(f"✓ Pipeline relancé — {len(df)} contrats reparsés", icon="🔄")
 
 # ── Filtres ────────────────────────────────────────────────────────────────────
 
