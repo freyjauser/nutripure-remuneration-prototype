@@ -720,7 +720,24 @@ with tab_export:
         mime="text/csv",
         use_container_width=True,
     )
-    st.dataframe(df_compta.head(10), use_container_width=True, hide_index=True)
+    st.caption("Aperçu des 10 premières lignes du fichier téléchargé ci-dessus.")
+    st.dataframe(
+        df_compta.head(10),
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Influenceur":         st.column_config.TextColumn(width="medium"),
+            "Responsable":         st.column_config.TextColumn(width="small"),
+            "CA mois (€ HT)":      st.column_config.NumberColumn(format="%.0f €", width="small"),
+            "Rémunération HT (€)": st.column_config.NumberColumn("Rému HT", format="%.2f €", width="small"),
+            "Montant à facturer":  st.column_config.NumberColumn("À facturer", format="%.2f €", width="small"),
+            "Statut TVA":          st.column_config.TextColumn("TVA", width="small"),
+            "Canal":               st.column_config.TextColumn(width="small"),
+            "Type contrat":        st.column_config.TextColumn("Type", width="small"),
+            "Version":             st.column_config.TextColumn(width="small"),
+            "Alertes":             st.column_config.TextColumn(width="large"),
+        },
+    )
 
 with tab_messages:
     if len(df_f) == 0:
