@@ -788,18 +788,6 @@ with tab_messages:
                     + "\n".join(f"• {a}" for a in critiques)
                     + "\n\nContacte la comptabilité ou Yohan avant de générer un message pour cet influenceur."
                 )
-                st.caption("Aperçu du message à titre informatif. La copie est désactivée tant que l'alerte n'est pas résolue.")
-                # Message affiché en état inactif : gris, non-sélectionnable, sans bouton copier
-                import html as _html
-                st.markdown(
-                    f"<pre style='background:#f1f5f9;color:#94a3b8;padding:16px 20px;"
-                    f"border-radius:8px;font-family:ui-monospace,Menlo,Monaco,monospace;"
-                    f"font-size:13px;line-height:1.5;white-space:pre-wrap;"
-                    f"user-select:none;pointer-events:none;opacity:0.7;"
-                    f"border:1px dashed #cbd5e1;margin-top:8px;'>"
-                    f"{_html.escape(msg)}</pre>",
-                    unsafe_allow_html=True,
-                )
             else:
                 st.markdown("<div class='copy-hint'>📋 Clique sur l'icône en haut à droite du bloc pour copier.</div>", unsafe_allow_html=True)
                 st.code(msg, language="markdown", wrap_lines=True)
