@@ -778,8 +778,21 @@ with tab_messages:
                 f"</div>",
                 unsafe_allow_html=True,
             )
-            st.markdown("<div class='copy-hint'>📋 Clique sur l'icône en haut à droite du bloc pour copier.</div>", unsafe_allow_html=True)
-            st.code(msg, language="markdown", wrap_lines=True)
+
+            # ── Garde-fou : bloquer l'envoi si alerte critique 🚨 ──────────────
+            alertes_list = [a for a in r["Alertes"].split(" | ") if a]
+            critiques = [a for a in alertes_list if "🚨" in a]
+            if critiques:
+                st.error(
+                    "🚨 **Envoi bloqué — alerte critique non résolue.**\n\n"
+                    + "\n".join(f"• {a}" for a in critiques)
+                    + "\n\nContacte la comptabilité ou Yohan avant de générer un message pour cet influenceur."
+                )
+                st.caption("Le message brut est visible ci-dessous à titre informatif, mais ne doit pas être envoyé en l'état.")
+                st.code(msg, language="markdown", wrap_lines=True)
+            else:
+                st.markdown("<div class='copy-hint'>📋 Clique sur l'icône en haut à droite du bloc pour copier.</div>", unsafe_allow_html=True)
+                st.code(msg, language="markdown", wrap_lines=True)
 
 st.divider()
 
