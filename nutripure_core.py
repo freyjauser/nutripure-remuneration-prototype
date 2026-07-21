@@ -327,6 +327,19 @@ def parse_contrat(texte: str, autoriser_llm: bool = True) -> Contrat:
 def calcule_remuneration(contrat: Contrat, ca: float, statut_tva: str = "inconnu") -> Resultat:
     alertes: list[str] = []
 
+    # ── Contrat non parsé : rendre le message clair, ne pas crasher ────────────
+    if contrat.type_detecte == "INCONNU" or not contrat.paliers:
+        alertes.append(
+            "🚨 Contrat non identifié : parseur regex n'a pas trouvé de type et le "
+            "fallback LLM est désactivé (ou a échoué). Calcul manuel requis."
+        )
+        return _build_resultat(
+            contrat.base_fixe,
+            "Contrat non parsable — aucun calcul possible.",
+            alertes,
+            statut_tva,
+        )
+
     # ── Alertes spéciales ──────────────────────────────────────────────────────
     if contrat.type_detecte == "T2" and ca == 0.0:
         alertes.append("⚠️ CA = 0 € sur contrat T2 (base fixe garantie). Vérifier si actif.")

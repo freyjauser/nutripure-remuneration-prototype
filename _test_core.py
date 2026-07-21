@@ -142,5 +142,16 @@ r16 = calcule_remuneration(T1_C, 10450.0, "assujetti_20")   # juliette.wellness
 check("T1 CA=10450 assujetti_20 → remu_ht=2336€", r16.remuneration_ht, 2336.0)
 check("T1 CA=10450 assujetti_20 → montant_facturer=2803.20€", r16.montant_facturer, 2803.20)
 
+# ── INCONNU : LLM OFF sur contrat hors-pattern ────────────────────────────────
+print("\n── Contrat INCONNU (LLM off) ──")
+UNKNOWN_TEXTE = "Contrat spécial one-off : 800 € HT garantis + 12 % du CA si CA > 5 000 €."
+c_unk = parse_contrat(UNKNOWN_TEXTE, autoriser_llm=False)
+check("Contrat inconnu → type INCONNU",     c_unk.type_detecte, "INCONNU")
+check("Contrat inconnu → paliers vides",    c_unk.paliers, [])
+
+r_unk = calcule_remuneration(c_unk, 7200.0, "non_assujetti")
+check("Contrat inconnu → ne crashe PAS",    r_unk.remuneration_ht, 0.0)
+check_in("Contrat inconnu → alerte 🚨",     r_unk.alertes, "🚨 Contrat non identifié : parseur regex n'a pas trouvé de type et le fallback LLM est désactivé (ou a échoué). Calcul manuel requis.")
+
 print("\n" + "=" * 60)
 print("Tous les tests terminés.")
